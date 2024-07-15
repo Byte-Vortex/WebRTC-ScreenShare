@@ -1,0 +1,78 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    background-image: url('./assets/background.png');
+    background-size: cover; /* Make sure the background image covers the entire container */
+    background-position: center; /* Center the background image */
+    background-attachment: fixed;
+    background-blend-mode:darken;
+    line-height: 5vh;
+}
+
+.login-form {
+    background: transparent;
+    padding: 20px;
+    border-radius: 8px;
+    width: 500px;
+    text-align: center; /* Center text inside the form */
+    border-radius: 10px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 50);
+}
+.detailcontainer{
+    margin-top: 3%;
+}
+
+.login-form label {
+    display: block;
+    font-size: large;
+    text-align: left;
+    margin-bottom: 8px;
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+.login-form input {
+    background: transparent;
+    font-size: large;
+    text-align: center;
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.login-form button {
+    margin: 8% 8%;
+    width: 60%;
+    padding: 10px;
+    font-size: large;
+    font-weight: bold;
+    background-color: #0ec4e9;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background-color: #0ec4e0;
+}
+
+.login-form p {
+    color: red;
+    font-weight: 400;
+    margin-top: -10px;
+}
+
+.loading-logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: #000;
+}
+

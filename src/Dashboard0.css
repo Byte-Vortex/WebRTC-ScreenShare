@@ -1,0 +1,106 @@
+.dashboard-container{
+    height: 100vh;
+    display: block;
+    background-image: url('./assets/background.png');
+    background-size: cover; /* Make sure the background image covers the entire container */
+    background-position: center; /* Center the background image */
+    background-attachment: fixed;
+    background-blend-mode: darken;
+    justify-content: center;
+}
+.contents{
+    position: relative;
+    top: 10vh;
+    text-align:center
+}
+.video-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.video-container .video {
+    width: 45%;
+    height: auto;
+    border: 1px solid #ccc;
+}
+
+.controls {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.dashboard-container .header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+}
+
+.logout-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    background-color: #ff3333;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.contents {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers horizontally */
+    justify-content: center; /* Centers vertically */
+    padding: 20px;
+    border-radius: 8px;
+    background: transparent;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 50);
+    width: 600px; /* Optional: Adjust width as needed */
+    margin-bottom: 20px;
+}
+
+.input-field{
+    width: 25%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: transparent;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.peer-button{
+    width: 20%;
+    font-size: small;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: rgb(50, 199, 236);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.peer-button:hover {
+    background-color: rgb(8, 187, 232);
+}
+.connection-code {
+    font-family: Arial, sans-serif; /* Example font family */
+    font-size: 16px; /* Example font size */
+    background-color: black;
+    color: white; /* Text color */
+    padding: 10px; /* Adjust padding as needed */
+}
+
+connection-code-div{
+    margin-top: 0%;
+    padding-top: 0%;
+}
