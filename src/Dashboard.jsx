@@ -105,12 +105,12 @@ const Dashboard = () => {
                 </div>
                 <div className='screencontainers' >
                     <div id="screenshare-container" hidden>
-                        {/* <h3 className='displayoption'>Shared Screen</h3> */}
+                        <h3 className='displayoption'>Shared Screen</h3>
                         <video height="30%" width="100%" id="screenshared-video" controls className="local-video"></video>
                     </div>  
                     <div id="remote-vid-container" style={{marginTop:'2vh'}} hidden>
                     <div>
-                    {/* <h3 className='displayoption'>Remote Screen</h3> */}
+                    <h3 className='displayoption'>Remote Screen</h3>
                     </div>    
                         <video height="30%" width="100%" id="remote-video" controls className="remote-video"></video>
                     </div>                   
