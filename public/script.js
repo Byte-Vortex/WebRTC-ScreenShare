@@ -7,7 +7,7 @@ var currentPeer = null;
 var screenSharing = false;
 var conn = null;
 
-window.createConnection = function() {
+window.createConnection = function () {
     console.log("Establishing Connection");
     let connection = window.connectionCode;
     connection_code = connection;
@@ -30,7 +30,7 @@ window.createConnection = function() {
     console.log("Connection Established with Id: " + connection_code);
 }
 
-window.setScreenSharingStream = function(stream) {
+window.setScreenSharingStream = function (stream) {
     console.log("Setting Screen Sharing Stream");
     document.getElementById("screenshare-container").hidden = false;
     let video = document.getElementById("screenshared-video");
@@ -39,7 +39,7 @@ window.setScreenSharingStream = function(stream) {
     video.play();
 }
 
-window.setRemoteStream = function(stream) {
+window.setRemoteStream = function (stream) {
     console.log("Setting Remote Screen");
     document.getElementById("remote-vid-container").hidden = false;
     let video = document.getElementById("remote-video");
@@ -47,7 +47,7 @@ window.setRemoteStream = function(stream) {
     video.play();
 }
 
-window.notify = function(msg) {
+window.notify = function (msg) {
     let notification = document.getElementById("notification");
     notification.innerHTML = msg;
     notification.classList.remove("hidden");
@@ -59,7 +59,7 @@ window.notify = function(msg) {
 }
 
 
-window.joinconnection = function() {
+window.joinconnection = function () {
     console.log("Joining connection");
     let connection = document.getElementById("connection-input").value;
     if (connection.trim() === "") {
@@ -74,10 +74,43 @@ window.joinconnection = function() {
         conn = peer.connect(connection_code); // Establish data connection
         document.getElementById("tohost").hidden = false;
         document.getElementById("gethost").hidden = false;
+
+        conn.on('data', (data) => {
+            debugger;
+            console.log(`Received data from host: ${data}`);
+            notify(`Host sent: ${data}`);
+        });
+
+        // Handle connection errors
+        conn.on('error', (err) => {
+            console.error("Data connection error: ", err);
+            notify(`Data connection error: ${err.message}`);
+        });
     });
+
+    peer.on('call', (call) => {
+        debugger;
+        // Answer the call with no local stream if you don't need to send any media
+        call.answer();
+
+        call.on('stream', (remoteStream) => {
+            console.log("Received screen stream from host.");
+            setRemoteStream(remoteStream);
+        });
+
+        call.on('close', () => {
+            console.log("Media connection closed.");
+        });
+
+        call.on('error', (error) => {
+            console.error("Media connection error: ", error);
+        });
+    });
+
+
 }
 
-window.startScreenShare = function() {
+window.startScreenShare = function () {
     if (screenSharing) {
         stopScreenSharing();
     }
@@ -89,7 +122,7 @@ window.startScreenShare = function() {
             stopScreenSharing();
         };
         if (peer) {
-            let sender = currentPeer.peerConnection.getSenders().find(function(s) {
+            let sender = currentPeer.peerConnection.getSenders().find(function (s) {
                 return s.track.kind == videoTrack.kind;
             });
             sender.replaceTrack(videoTrack);
@@ -101,7 +134,7 @@ window.startScreenShare = function() {
     });
 }
 
-window.stopScreenSharing = function() {
+window.stopScreenSharing = function () {
     if (screenStream) {
         let tracks = screenStream.getTracks();
         tracks.forEach(track => track.stop());
@@ -115,7 +148,7 @@ window.stopScreenSharing = function() {
     }
 }
 
-window.getHostScreen = function() {
+window.getHostScreen = function () {
     console.log("Requesting Host Screen");
     if (!conn) {
         console.error("Data connection (conn) not established.");
@@ -124,12 +157,23 @@ window.getHostScreen = function() {
     conn.send('REQUEST_SCREEN_SHARE');
 }
 
-window.screenAccessRequest = function(accepted) {
+window.screenAccessRequest = function (accepted) {
     if (accepted) {
         navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
             screenStream = stream;
             setScreenSharingStream(screenStream);
             if (conn) {
+                // Get the ID of the peer that initiated this connection
+                const remotePeerId = conn.peer;
+                console.log('Received connection from peer ID:', remotePeerId);
+                const mediaConnection = peer.call(remotePeerId, screenStream);
+                mediaConnection.on('close', () => {
+                    console.log("Media connection closed.");
+                });
+
+                mediaConnection.on('error', (error) => {
+                    console.error("Media connection error: ", error);
+                });
                 conn.send('SCREEN_SHARE_ACCEPTED');
                 console.log("Screen share accepted message sent to remote.");
             }
@@ -148,43 +192,43 @@ window.screenAccessRequest = function(accepted) {
     }
 }
 
-window.sendStreamToRemote = function(stream) {
+window.sendStreamToRemote = function (stream) {
     const createMediaStreamFake = () => {
         return new MediaStream([createEmptyAudioTrack(), createEmptyVideoTrack({ width: 640, height: 480 })]);
     }
-    
-        const createEmptyAudioTrack = () => {
-            const ctx = new AudioContext();
-            const oscillator = ctx.createOscillator();
-            const dst = oscillator.connect(ctx.createMediaStreamDestination());
-            oscillator.start();
-            const track = dst.stream.getAudioTracks()[0];
-            return Object.assign(track, { enabled: false });
-        }
-    
-        const createEmptyVideoTrack = ({ width, height }) => {
-            const canvas = Object.assign(document.createElement('canvas'), { width, height });
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = "green";
-            ctx.fillRect(0, 0, width, height);
-    
-            const stream = canvas.captureStream();
-            const track = stream.getVideoTracks()[0];
-    
-            return Object.assign(track, { enabled: false });
-        };
-    
-        notify("Sharing Screen Initiated")
-        startScreenShare();
-        let call = peer.call(connection_code, createMediaStreamFake())
-        call.on('stream', (stream) => {
-            setRemoteStream(stream);
-            currentPeer = call;
-    
-        })
+
+    const createEmptyAudioTrack = () => {
+        const ctx = new AudioContext();
+        const oscillator = ctx.createOscillator();
+        const dst = oscillator.connect(ctx.createMediaStreamDestination());
+        oscillator.start();
+        const track = dst.stream.getAudioTracks()[0];
+        return Object.assign(track, { enabled: false });
+    }
+
+    const createEmptyVideoTrack = ({ width, height }) => {
+        const canvas = Object.assign(document.createElement('canvas'), { width, height });
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = "green";
+        ctx.fillRect(0, 0, width, height);
+
+        const stream = canvas.captureStream();
+        const track = stream.getVideoTracks()[0];
+
+        return Object.assign(track, { enabled: false });
+    };
+
+    notify("Sharing Screen Initiated")
+    startScreenShare();
+    let call = peer.call(connection_code, createMediaStreamFake())
+    call.on('stream', (stream) => {
+        setRemoteStream(stream);
+        currentPeer = call;
+
+    })
 }
 
-window.hostSideSetup = function() {
+window.hostSideSetup = function () {
     if (!peer) {
         console.error("Peer connection not initialized.");
         return;
@@ -206,11 +250,11 @@ window.hostSideSetup = function() {
     });
 }
 
-window.shareScreenToHost = function() {
+window.shareScreenToHost = function () {
     console.log("Sharing Screen to Host");
     const createMediaStreamFake = () => {
-    return new MediaStream([createEmptyAudioTrack(), createEmptyVideoTrack({ width: 640, height: 480 })]);
-}
+        return new MediaStream([createEmptyAudioTrack(), createEmptyVideoTrack({ width: 640, height: 480 })]);
+    }
 
     const createEmptyAudioTrack = () => {
         const ctx = new AudioContext();
